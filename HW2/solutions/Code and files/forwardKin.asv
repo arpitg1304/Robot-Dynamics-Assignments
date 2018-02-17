@@ -1,0 +1,68 @@
+function [T, C] = forwardKin(config)
+    syms theta1 theta2 theta3 theta4 theta5 theta6;
+    theta = [theta1 theta2+90 theta3 theta4 theta5 theta6];
+    d =  [290,0,0,302,0,72];
+    a =  [0,-270,-70,0,0,0];
+    alpha =  [-90,0,90,-90,90,0];
+    
+    T = [];
+    for m = 1:6
+        T_temp = dhparam2matrix(theta(m), d(m), a(m), alpha(m));
+        T = [T, T_temp];
+    end
+    
+    T1 = vpa(T(:, 1:4),4);
+    T2 = vpa(T(:, 5:8),4);
+    T3 = vpa(T(:, 9:12),4);
+    T4 = vpa(T(:, 13:16),4);
+    T5 = vpa(T(:, 17:20),4);
+    T6 = vpa(T(:, 21:24),4);
+    
+%     T01 = double(vpa(subs(T1, {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0}),2))
+%     T02 = double(vpa(subs((T01*T2), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0}),2))
+%     T03 = double(vpa(subs((T02*T3), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0}),2))
+%     T04 = double(vpa(subs((T03*T4), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0}),2))
+%     T05 = double(vpa(subs((T04*T5), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0}),2))
+%     T06 = double(vpa(subs((T05*T6), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0}),2))
+%   
+
+    T01 = subs(T1, {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0})
+    T02 =subs((T01*T2), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0})
+    T03 = subs((T02*T3), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0})
+    T04 = subs((T03*T4), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0})
+    T05 = subs((T04*T5), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0})
+    T06 = subs((T05*T6), {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0})
+
+
+    T = subs(T06, {theta1, theta2, theta3, theta4, theta5, theta6}, {0,0,0,0,0,0});
+    T = double((vpa(T,2)));
+    
+    X = [0, T01(1,4), T02(1,4), T03(1,4), T04(1,4), T05(1,4), T06(1,4)]
+    Y = [0, T01(2,4), T02(2,4), T03(2,4), T04(2,4), T05(2,4), T06(2,4)]
+    Z = [0, T01(3,4), T02(3,4), T03(3,4), T04(3,4), T05(3,4), T06(3,4)]
+    
+    C = [X;Y;Z]; 
+    
+    X1 = [0,0,0,0,302,302, 374];
+    Y1 = [0,0,0,0,0,0,0];
+    Z1 = [0,290,560,630,630,630];
+    
+    plot3(X1,Y1,Z1);
+    xlabel('XXX')
+    ylabel('YYY')
+    zlabel('ZZZ')
+    
+    hold on;
+    scatter3(X1,Y1,Z1);
+    
+%     plot3(X,Y,Z);
+%     xlabel('XXX')
+%     ylabel('YYY')
+%     zlabel('ZZZ')
+%     
+%     hold on;
+%     scatter3(X,Y,Z);
+    
+    
+    
+end
